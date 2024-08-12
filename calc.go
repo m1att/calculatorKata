@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -26,7 +27,18 @@ func sum(a, b int, op string) int {
 	}
 }
 
+func isValidRoman(roman string) bool {
+	
+	validRomanPattern := `^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`
+	matched, _ := regexp.MatchString(validRomanPattern, roman)
+	return matched
+}
+
 func romanToArabic(roman string) int {
+	if !isValidRoman(roman) {
+		panic("Неверный формат римского числа")
+	}
+
 	elements := map[rune]int{'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100}
 
 	total := 0
@@ -63,12 +75,15 @@ func arabicToRoman(arabic int) string {
 }
 
 func checkType(value string) (int, bool) {
-	// Check if it's an Arabic number
+	
 	if arabic, err := strconv.Atoi(value); err == nil && arabic >= 1 && arabic <= 10 {
 		return arabic, false
 	}
-
-	// Otherwise, assume it's a Roman number
+	
+	if !isValidRoman(value) {
+		panic("Неверный формат римского числа")
+	}
+	
 	return romanToArabic(value), true
 }
 
